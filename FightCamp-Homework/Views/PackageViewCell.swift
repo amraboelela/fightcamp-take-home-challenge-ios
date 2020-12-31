@@ -10,37 +10,83 @@ import UIKit
 class PackageViewCell: UITableViewCell {
     var titleLabel = UILabel()
     var descLabel = UILabel()
-    
-    let margin = CGFloat(24)
+    var paymentLabel = UILabel()
+    var priceLabel = UILabel()
+    var actionButton = UIButton()
+    var propertiesStackView = UIStackView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: CellStyle.default, reuseIdentifier: "PackageViewCell")
 
-        let containerView = UIView()
-        addSubview(containerView)
+        let packageView = UIView()
+        addSubview(packageView)
         
         let verticalStackView = UIStackView()
         verticalStackView.axis = .vertical
-        verticalStackView.spacing = margin
+        verticalStackView.spacing = CGFloat.packageSpacing
         verticalStackView.addArrangedSubview(titleLabel)
         verticalStackView.addArrangedSubview(descLabel)
-        containerView.addSubview(verticalStackView)
+        packageView.addSubview(verticalStackView)
         
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.topAnchor.constraint(equalTo: topAnchor, constant: margin).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margin).isActive = true
-        containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -margin).isActive = true
-        containerView.backgroundColor = UIColor.primaryBackground
-        containerView.layer.cornerRadius = CGFloat(8)
+        propertiesStackView.axis = .vertical
+        propertiesStackView.spacing = CGFloat(8)
+        
+        verticalStackView.addArrangedSubview(propertiesStackView)
+        
+        let paymentStackView = UIStackView()
+        paymentStackView.axis = .vertical
+        paymentStackView.spacing = CGFloat(8)
+        paymentStackView.alignment = .center
+        
+        paymentStackView.addArrangedSubview(paymentLabel)
+        paymentStackView.addArrangedSubview(priceLabel)
+        
+        let bottomStackView = UIStackView()
+        bottomStackView.axis = .vertical
+        bottomStackView.alignment = .fill
+        bottomStackView.spacing = CGFloat.packageSpacing
+        
+        bottomStackView.addArrangedSubview(paymentStackView)
+        
+        actionButton.layer.cornerRadius = CGFloat.buttonRadius
+        actionButton.translatesAutoresizingMaskIntoConstraints = false
+        actionButton.heightAnchor.constraint(equalToConstant: CGFloat.buttonHeight).isActive = true
+        
+        bottomStackView.addArrangedSubview(actionButton)
+        verticalStackView.addArrangedSubview(bottomStackView)
+        
+        packageView.translatesAutoresizingMaskIntoConstraints = false
+        packageView.topAnchor.constraint(equalTo: topAnchor, constant: CGFloat.packageSpacing).isActive = true
+        packageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        packageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.packageSpacing).isActive = true
+        packageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.packageSpacing).isActive = true
+        packageView.backgroundColor = UIColor.primaryBackground
+        packageView.layer.cornerRadius =  CGFloat.packageRadius
         
         verticalStackView.translatesAutoresizingMaskIntoConstraints = false
-        verticalStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: margin).isActive = true
-        verticalStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -margin).isActive = true
-        verticalStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: margin).isActive = true
-        verticalStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -margin).isActive = true
+        verticalStackView.topAnchor.constraint(equalTo: packageView.topAnchor, constant: CGFloat.packageSpacing).isActive = true
+        verticalStackView.bottomAnchor.constraint(equalTo: packageView.bottomAnchor, constant: -CGFloat.packageSpacing).isActive = true
+        verticalStackView.leadingAnchor.constraint(equalTo: packageView.leadingAnchor, constant: CGFloat.packageSpacing).isActive = true
+        verticalStackView.trailingAnchor.constraint(equalTo: packageView.trailingAnchor, constant: -CGFloat.packageSpacing).isActive = true
         
         self.backgroundColor = UIColor.clear
+        
+        titleLabel.textColor = UIColor.brandRed
+        titleLabel.font = UIFont.title
+        
+        descLabel.numberOfLines = 0
+        descLabel.textColor = UIColor.label
+        descLabel.font = UIFont.body
+        
+        paymentLabel.textColor = UIColor.label
+        paymentLabel.font = UIFont.body
+        
+        priceLabel.textColor = UIColor.label
+        priceLabel.font = UIFont.price
+        
+        actionButton.setTitleColor(UIColor.buttonTitle, for: .normal)
+        actionButton.backgroundColor = UIColor.buttonBackground
+        actionButton.titleLabel?.font = UIFont.button
     }
     
     required init?(coder: NSCoder) {
@@ -48,13 +94,30 @@ class PackageViewCell: UITableViewCell {
     }
     
     func updateWith(viewModel: PackageViewModel) {
-        titleLabel.text = viewModel.package.title.uppercased()
-        titleLabel.textColor = UIColor.brandRed
-        titleLabel.font = UIFont.title
+        titleLabel.text = viewModel.title.uppercased()
+        descLabel.text = viewModel.desc.capitalized
+        for arrangedSubview in propertiesStackView.arrangedSubviews {
+            arrangedSubview.removeFromSuperview()
+        }
+        for includedProperty in viewModel.includedProperties {
+            let includedPropertyLabel = UILabel()
+            includedPropertyLabel.text = includedProperty.capitalized
+            includedPropertyLabel.textColor = UIColor.label
+            includedPropertyLabel.font = UIFont.body
+            propertiesStackView.addArrangedSubview(includedPropertyLabel)
+        }
+        for excludedProperty in viewModel.excludedProperties {
+            let excludedPropertyLabel = UILabel()
+            let attributeString: NSMutableAttributedString =  NSMutableAttributedString(string: excludedProperty.capitalized)
+                attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
+            excludedPropertyLabel.attributedText = attributeString
+            excludedPropertyLabel.textColor = UIColor.label
+            excludedPropertyLabel.font = UIFont.body
+            propertiesStackView.addArrangedSubview(excludedPropertyLabel)
+        }
         
-        descLabel.text = viewModel.package.desc.capitalized
-        descLabel.numberOfLines = 0
-        descLabel.textColor = UIColor.label
-        descLabel.font = UIFont.body
+        paymentLabel.text = viewModel.paymentType.capitalized
+        priceLabel.text = "$\(viewModel.price)"
+        actionButton.setTitle(viewModel.actionTitle, for: .normal)
     }
 }

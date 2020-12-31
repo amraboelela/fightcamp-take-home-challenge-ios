@@ -8,7 +8,8 @@
 import Foundation
 
 struct Package: Codable {
-    let title, desc: String
+    let title: String
+    let desc: String
     let thumbnailUrls: [String]
     let included: [String]
     let excluded: [String]?
