@@ -36,6 +36,8 @@ class PackageViewCell: UITableViewCell {
         imagesStackView.spacing = CGFloat.thumbnailSpacing
         
         productImageView.contentMode = .scaleToFill
+        productImageView.layer.cornerRadius = CGFloat.thumbnailRadius
+        productImageView.layer.masksToBounds = true
         productImageView.translatesAutoresizingMaskIntoConstraints = false
         productImageView.heightAnchor.constraint(equalToConstant: CGFloat.thumbnailHeight).isActive = true
         
@@ -129,6 +131,7 @@ class PackageViewCell: UITableViewCell {
             
             button.layer.cornerRadius = CGFloat.thumbnailRadius
             button.layer.borderWidth = CGFloat.thumbnailBorderWidth
+            button.layer.masksToBounds = true
             let selected = viewModel.selectedImageIndex == count
             if selected {
                 productImageView.image = thumbnail
