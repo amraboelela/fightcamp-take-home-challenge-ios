@@ -8,16 +8,20 @@
 import UIKit
 
 class PackageViewCell: UITableViewCell {
+    var packageViewModel: PackageViewModel?
     var titleLabel = UILabel()
     var descLabel = UILabel()
     var paymentLabel = UILabel()
     var priceLabel = UILabel()
     var actionButton = UIButton()
+    var productImageView = UIImageView()
+    var imagesStackView = UIStackView()
+    var thumbnailsStackView = UIStackView()
     var propertiesStackView = UIStackView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: CellStyle.default, reuseIdentifier: "PackageViewCell")
-
+        
         let packageView = UIView()
         addSubview(packageView)
         
@@ -28,9 +32,24 @@ class PackageViewCell: UITableViewCell {
         verticalStackView.addArrangedSubview(descLabel)
         packageView.addSubview(verticalStackView)
         
+        imagesStackView.axis = .vertical
+        imagesStackView.spacing = CGFloat.thumbnailSpacing
+        
+        productImageView.contentMode = .scaleToFill
+        productImageView.translatesAutoresizingMaskIntoConstraints = false
+        productImageView.heightAnchor.constraint(equalToConstant: CGFloat.thumbnailHeight).isActive = true
+        
+        thumbnailsStackView.axis = .horizontal
+        thumbnailsStackView.spacing = CGFloat.thumbnailSpacing
+        thumbnailsStackView.distribution = .fillEqually
+        
+        imagesStackView.addArrangedSubview(productImageView)
+        imagesStackView.addArrangedSubview(thumbnailsStackView)
+        
+        verticalStackView.addArrangedSubview(imagesStackView)
+        
         propertiesStackView.axis = .vertical
         propertiesStackView.spacing = CGFloat(8)
-        
         verticalStackView.addArrangedSubview(propertiesStackView)
         
         let paymentStackView = UIStackView()
@@ -87,6 +106,8 @@ class PackageViewCell: UITableViewCell {
         actionButton.setTitleColor(UIColor.buttonTitle, for: .normal)
         actionButton.backgroundColor = UIColor.buttonBackground
         actionButton.titleLabel?.font = UIFont.button
+        
+        self.contentView.isUserInteractionEnabled = false
     }
     
     required init?(coder: NSCoder) {
@@ -94,8 +115,33 @@ class PackageViewCell: UITableViewCell {
     }
     
     func updateWith(viewModel: PackageViewModel) {
+        packageViewModel = viewModel
         titleLabel.text = viewModel.title.uppercased()
         descLabel.text = viewModel.desc.capitalized
+        
+        for arrangedSubview in thumbnailsStackView.arrangedSubviews {
+            arrangedSubview.removeFromSuperview()
+        }
+        var count = 0
+        for thumbnail in viewModel.thumbnails {
+            let button = UIButton()
+            button.setImage(thumbnail, for: .normal)
+            
+            button.layer.cornerRadius = CGFloat.thumbnailRadius
+            button.layer.borderWidth = CGFloat.thumbnailBorderWidth
+            let selected = viewModel.selectedImageIndex == count
+            if selected {
+                productImageView.image = thumbnail
+            }
+            button.layer.borderColor = UIColor.thumbnailBorder(selected: selected).cgColor
+            button.translatesAutoresizingMaskIntoConstraints = false
+            button.heightAnchor.constraint(equalTo: button.widthAnchor).isActive = true
+            button.tag = count
+            thumbnailsStackView.addArrangedSubview(button)
+            button.addTarget(self, action: #selector(imageTapped(sender:)), for: .touchUpInside)
+            count += 1
+        }
+        
         for arrangedSubview in propertiesStackView.arrangedSubviews {
             arrangedSubview.removeFromSuperview()
         }
@@ -109,15 +155,23 @@ class PackageViewCell: UITableViewCell {
         for excludedProperty in viewModel.excludedProperties {
             let excludedPropertyLabel = UILabel()
             let attributeString: NSMutableAttributedString =  NSMutableAttributedString(string: excludedProperty.capitalized)
-                attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
+            attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
             excludedPropertyLabel.attributedText = attributeString
-            excludedPropertyLabel.textColor = UIColor.label
+            excludedPropertyLabel.textColor = UIColor.disabledLabel
             excludedPropertyLabel.font = UIFont.body
             propertiesStackView.addArrangedSubview(excludedPropertyLabel)
         }
         
         paymentLabel.text = viewModel.paymentType.capitalized
         priceLabel.text = "$\(viewModel.price)"
-        actionButton.setTitle(viewModel.actionTitle, for: .normal)
+        actionButton.setTitle(viewModel.actionTitle.capitalized, for: .normal)
     }
+    
+    @objc func imageTapped(sender: UIButton) {
+        if let packageViewModel = packageViewModel {
+            packageViewModel.selectedImageIndex = sender.tag
+            updateWith(viewModel: packageViewModel)
+        }
+    }
+    
 }

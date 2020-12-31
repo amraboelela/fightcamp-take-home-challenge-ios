@@ -5,7 +5,7 @@
 //  Created by Amr Aboelela on 12/30/20.
 //
 
-import Foundation
+import UIKit
 
 class PackageViewModel {
 
@@ -19,9 +19,15 @@ class PackageViewModel {
         return package.desc
     }
     
-    var thumbnailUrls: [URL] {
-        return package.thumbnailUrls.compactMap { URL(string: $0) }
-    }
+    lazy var thumbnails: [UIImage] = {
+        return package.thumbnailUrls.compactMap { urlString in
+            if let url = URL(string: urlString), let data = try? Data(contentsOf: url) {
+                let image = UIImage(data: data)
+                return image
+            }
+            return nil
+        }
+    }()
     
     var includedProperties: [String] {
         return package.included
@@ -42,6 +48,8 @@ class PackageViewModel {
     var actionTitle: String {
         return package.action
     }
+    
+    var selectedImageIndex = 0
     
     init(package: Package) {
         self.package = package
