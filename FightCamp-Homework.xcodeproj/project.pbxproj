@@ -22,6 +22,7 @@
 		F559029C259D58710055A489 /* PackagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5590297259D58710055A489 /* PackagesViewModel.swift */; };
 		F559029D259D58710055A489 /* PackageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5590298259D58710055A489 /* PackageViewModel.swift */; };
 		F559029E259D58710055A489 /* PackageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F559029A259D58710055A489 /* PackageViewCell.swift */; };
+		F55902A5259D5E940055A489 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F55902A4259D5E940055A489 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		F5590297259D58710055A489 /* PackagesViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PackagesViewModel.swift; sourceTree = "<group>"; };
 		F5590298259D58710055A489 /* PackageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PackageViewModel.swift; sourceTree = "<group>"; };
 		F559029A259D58710055A489 /* PackageViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PackageViewCell.swift; sourceTree = "<group>"; };
+		F55902A4259D5E940055A489 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 				C1FD02AB249B23E10029487C /* Helpers */,
 				C1BD979A249AFF0C0044B734 /* Assets */,
 				C1BD9779249AC04D0044B734 /* AppDelegate.swift */,
+				F55902A4259D5E940055A489 /* README.md */,
 				C1BD9792249AC3620044B734 /* packages.json */,
 				F5590287259D583F0055A489 /* PackagesViewController.swift */,
 				F5590294259D58710055A489 /* Models */,
@@ -192,6 +195,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F55902A5259D5E940055A489 /* README.md in Resources */,
 				C1BD9793249AC3620044B734 /* packages.json in Resources */,
 				C1BD9783249AC04E0044B734 /* Assets.xcassets in Resources */,
 				C1BD979E249AFFCC0044B734 /* Font-2.otf in Resources */,

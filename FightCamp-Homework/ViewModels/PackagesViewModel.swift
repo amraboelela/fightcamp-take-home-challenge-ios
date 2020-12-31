@@ -7,8 +7,6 @@
 
 import Foundation
 
-let packagesViewModel = PackagesViewModel()
-
 class PackagesViewModel {
 
     var packageViewModels = [PackageViewModel]()
